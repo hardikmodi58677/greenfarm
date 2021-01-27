@@ -28,11 +28,12 @@ export const getUserLoginStatus = () => dispatch => {
         else {
             database().ref("/users").orderByChild("email").equalTo(user.email).once("value", snapshot => {
                 if (snapshot.exists()) {
+                    const key = Object.keys(snapshot.val())[0]
                     const details = Object.values(snapshot.val())[0]
                     dispatch({
                         type: actionTypes.GET_LOGIN_STATUS,
                         isSuccess: true,
-                        user: details,
+                        user: { ...details, key },
                     })
                 }
             })
@@ -112,16 +113,27 @@ export const loginUser = ({ loginType = "email", loginId = "", password = "" }) 
     database().ref("/users").orderByChild(loginType).equalTo(loginId).once("value", snapshot => {
         if (snapshot.exists()) {
             const user = Object.values(snapshot.val())[0]
-            const userEmail = user.email
-            auth().signInWithEmailAndPassword(userEmail, password).then((userCredential) => {
+            console.log("user", user)
+            if ((user.isActive !== undefined || user.isActive !== null) && user.isActive === false) {
                 dispatch({
                     type: actionTypes.LOGIN_USER,
-                    isSuccess: true,
-                    user,
+                    isSuccess: false,
+                    message: "Your account has been disabled by admin.Please contact admin for support.",
                 })
-            }).catch(err => {
-                dispatch({ type: actionTypes.LOGIN_USER, message: err.message, isSuccess: false })
-            })
+            }
+            else {
+                const userEmail = user.email
+                auth().signInWithEmailAndPassword(userEmail, password).then((userCredential) => {
+                    dispatch({
+                        type: actionTypes.LOGIN_USER,
+                        isSuccess: true,
+                        user,
+                    })
+                }).catch(err => {
+                    dispatch({ type: actionTypes.LOGIN_USER, message: err.message, isSuccess: false })
+                })
+            }
+
         }
         else {
             dispatch({ type: actionTypes.LOGIN_USER, message: "No such user exists.Please try again.", isSuccess: false })
@@ -130,7 +142,6 @@ export const loginUser = ({ loginType = "email", loginId = "", password = "" }) 
         dispatch({ type: actionTypes.LOGIN_USER, message: err.message, isSuccess: false })
     })
 }
-
 
 // export const loginUser = ({ phoneNumber }) => (dispatch) => {
 //     // dispatch({ type: "CLEAR_MESSAGE" })

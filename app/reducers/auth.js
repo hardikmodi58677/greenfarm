@@ -6,6 +6,7 @@ import cache from "../utility/cache";
 const initialState = {
     isLoggedIn: false,
     user: null,
+    isReady: false,
     resMessage: "",
     resStatus: false,
     verificationId: "",
@@ -20,9 +21,9 @@ const authReducer = (state = initialState, action) => {
             if (isSuccess) {
                 // console.log("action user ", action.user, user)
                 cache.storeData("user", user)
-                return { ...state, user }
+                return { ...state, user, isReady: true }
             }
-            return { ...state, user: null }
+            return { ...state, user: null, isReady: true  }
         }
 
         case actionTypes.REGISTER_USER: {

@@ -8,38 +8,33 @@ import AuthNavigator from './app/navigation/AuthNavigator';
 import { LogBox } from 'react-native';
 import FlashMessage from "react-native-flash-message";
 import AppNavigator from "./app/navigation/AppNavigator"
-import cache from './app/utility/cache';
+import AppLoading from 'expo-app-loading';
 LogBox.ignoreLogs(['Setting a timer'])
 
 const App = () => {
-  const prevProps = useRef({ user }).current
-  const user = useSelector(state => state.auth.user)
+
+  const { user, isReady } = useSelector(state => state.auth)
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(getUserLoginStatus())
   }, [])
 
-  // useEffect(() => {
-  //   if (prevProps.user !== user) {
-  //     dispatch(getUserLoginStatus())
-  //     if (user && Object.keys(user).length) {
-  //     }
-  //   }
-  //   return () => {
-  //     prevProps.user = user
-  //   }
-  // }, [prevProps.user])
-
-
-  return (
-    <NavigationContainer theme={navigationTheme}>
-      {
-        user && user.role ? <AppNavigator role={user.role} /> : <AuthNavigator />
-      }
-      < FlashMessage position="top" autoHide />
-    </NavigationContainer>
-  )
+  if (!isReady) {
+    return (
+      <AppLoading />
+    )
+  }
+  else {
+    return (
+      <NavigationContainer theme={navigationTheme}>
+        {
+          user && user.role ? <AppNavigator role={user.role} /> : <AuthNavigator />
+        }
+        < FlashMessage position="top" autoHide />
+      </NavigationContainer>
+    )
+  }
 }
 
 const styles = StyleSheet.create({

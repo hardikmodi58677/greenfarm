@@ -1,8 +1,12 @@
 import * as actionTypes from "./types"
 import firebaseClient from "../firebaseClient"
 const { firebase: { auth, database } } = firebaseClient
+import { sendMessage as sendMessageAdmin } from "./admin"
 import store from "../reducers/index"
+import { clearMessage as clearPreviousMessage } from "./auth"
 
+export const clearMessage = clearPreviousMessage
+export const sendMessage = sendMessageAdmin
 export const getSensorData = () => dispatch => {
     const sensorData = []
     database().ref("/sensordata").limitToFirst(50).once("value", dataSnapshot => {

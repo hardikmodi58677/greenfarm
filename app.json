@@ -4,14 +4,15 @@
     "slug": "greenfarm",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./app/assets/images/applogo.png",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./app/assets/images/applogo.png",
+      "height": 200,
+      "width": 200,
+      "backgroundColor": "#fff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 1500
     },
     "assetBundlePatterns": [
       "**/*"
@@ -23,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.greenfarm.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"

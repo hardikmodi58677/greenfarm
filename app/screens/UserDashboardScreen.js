@@ -1,15 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, FlatList } from "react-native";
-import routes from "../navigation/routes"
+import { StyleSheet, FlatList, Modal } from "react-native";
 import Screen from "../components/Screen";
 import Card from "../components/Card";
 import colors from "../config/colors";
-import AppText from "../components/AppText";
-import AppButton from "../components/AppButton";
-import ActivityIndicator from "../components/ActivityIndicator"
 import { useDispatch, useSelector } from "react-redux";
 import { getSensorData } from "../actions/user"
 import { showMessage } from "react-native-flash-message";
+import LottieView from "lottie-react-native"
+
 
 
 export default function UserDashboard({ navigation }) {
@@ -65,7 +63,17 @@ export default function UserDashboard({ navigation }) {
       <AppButton title="Retry" onPress={() => loadListings()} />
     </> */}
       {/* } */}
-      <ActivityIndicator visible={loading} />
+      {
+        loading && (
+          <Modal visible={loading} style={styles.modal} transparent>
+            <LottieView
+              loop={true}
+              autoPlay
+              source={require("../assets/animations/loader.json")}
+            />
+          </Modal>
+        )
+      }
       <FlatList
         showsVerticalScrollIndicator={false}
         data={sensorData}

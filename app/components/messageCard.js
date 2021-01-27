@@ -23,9 +23,9 @@ export default function ListItem(props) {
           {IconComponent}
           {<Image style={styles.image} source={require("../assets/images/userImage.jpg")} />}
           <View style={styles.detailsContainer}>
-            <AppText numberOfLines={1} style={styles.title}>{title}</AppText>
-            {subTitle && <AppText numberOfLines={2} style={styles.subTitle}>{subTitle}</AppText>}
-            {phoneNumber && <AppText numberOfLines={2} style={styles.subTitle}>{phoneNumber}</AppText>}
+            <AppText numberOfLines={1} style={styles.title}>{from ? `${title} - ${from}` : title}</AppText>
+            {subTitle && <AppText numberOfLines={3} style={styles.subTitle}>{subTitle}</AppText>}
+            {phoneNumber && <AppText numberOfLines={3} style={styles.subTitle}>{phoneNumber}</AppText>}
           </View>
           {/* <MaterialCommunityIcons color={colors.medium} name="chevron-right" size={25} /> */}
         </View>
@@ -39,10 +39,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 15,
     alignItems: "center",
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   detailsContainer: {
     flex: 1,
+    display: "flex",
     marginLeft: 10,
     justifyContent: "center",
   },

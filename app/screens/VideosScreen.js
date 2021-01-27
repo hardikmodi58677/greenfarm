@@ -3,7 +3,6 @@ import { StyleSheet, FlatList, Linking, Modal, View, Text, TouchableHighlight } 
 import Screen from "../components/Screen";
 import VideoCard from "../components/VideoCard";
 import colors from "../config/colors";
-import ActivityIndicator from "../components/ActivityIndicator"
 import { useDispatch, useSelector } from "react-redux";
 import { getUserVideos } from "../actions/user"
 import { showMessage } from "react-native-flash-message";
@@ -13,6 +12,8 @@ import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import * as Yup from "yup";
 import AppButton from "../components/AppButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import LottieView from "lottie-react-native"
+
 
 
 
@@ -50,7 +51,6 @@ export default function VideosScreen({ navigation, role }) {
 
     const handleDelete = (videoKey) => {
         dispatch(deleteVideo(videoKey))
-        // setMessages(messages.filter((videoKey) => m.videoKey !== message.videoKey));
     };
 
 
@@ -94,7 +94,17 @@ export default function VideosScreen({ navigation, role }) {
 
     return (
         <Screen style={styles.screen}>
-            <ActivityIndicator visible={loading} />
+            {
+                loading && (
+                    <Modal visible={loading} style={styles.modal} transparent>
+                        <LottieView
+                            loop={true}
+                            autoPlay
+                            source={require("../assets/animations/loader.json")}
+                        />
+                    </Modal>
+                )
+            }
 
             <FlatList
                 showsVerticalScrollIndicator={false}

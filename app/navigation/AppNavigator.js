@@ -6,9 +6,11 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import routes from './routes'
 import AccountNavigator from "./AccountNavigator"
 import MessagesScreen from '../screens/MessagesScreen'
+import FeedbackScreen from '../screens/FeedbackScreen'
 import VideosScreen from "../screens/VideosScreen"
 import UsersListScreen from "../screens/UsersListScreen"
 import UserSectionNavigator from "../navigation/UsersNavigator"
+import { MaterialIcons } from '@expo/vector-icons'; 
 
 
 const Tab = createBottomTabNavigator()
@@ -17,17 +19,24 @@ const AppNavigator = ({ role }) => (
     <Tab.Navigator>
 
         {role == "admin" &&
-            <Tab.Screen
-                name={routes.USER_LIST}
-                children={() => <UserSectionNavigator />}
-                options={{ tabBarIcon: ({ color, size }) => <FontAwesome5 name="users" color={color} size={size} /> }}
-            />
+            <>
+                <Tab.Screen
+                    name={routes.USER_LIST}
+                    children={() => <UserSectionNavigator />}
+                    options={{ tabBarIcon: ({ color, size }) => <FontAwesome5 name="users" color={color} size={size} /> }}
+                />
+                <Tab.Screen
+                    name={routes.USER_FEEDBACK}
+                    children={() => <FeedbackScreen />}
+                    
+                    options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="feedback" color={color} size={size} />}}
+                />
+            </>
         }
         <Tab.Screen
             name={role == "admin" ? routes.SENSORS_DATA : routes.USER_DASHBOARD}
-
             children={() => <UserDashboard role={role} />}
-            options={{ tabBarIcon: ({ color, size }) => role == "admin" ? <FontAwesome5 name="temperature-low" size={24} color="black" /> : <MaterialCommunityIcons name="home" color={color} size={size} /> }}
+            options={{ tabBarIcon: ({ color, size }) => <FontAwesome5 name="temperature-low" size={size} color={color} /> }}
         />
 
         <Tab.Screen

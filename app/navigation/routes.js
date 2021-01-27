@@ -17,4 +17,5 @@ export default Object.freeze({
     USER_LIST: "USERS",
     SENSORS_DATA: "SENSOR DATA",
     USER_DETAILS: "USER_DETAILS",
+    USER_FEEDBACK: "FEEDBACK",
 })

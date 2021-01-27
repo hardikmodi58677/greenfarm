@@ -9,7 +9,8 @@ const initialState = {
     resStatus: false,
     userData: null,
     isDeleted: false,
-    userDetails: null
+    userDetails: null,
+    feedbackData: []
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -25,6 +26,22 @@ const adminReducer = (state = initialState, action) => {
             return { ...state, user: null }
         }
 
+        case actionTypes.SEND_FEEDBACK: {
+            return { ...state, resMessage: message, resStatus: isSuccess }
+        }
+
+        case actionTypes.GET_FEEDBACK_DATA: {
+            if (isSuccess) {
+                return { ...state, feedbackData: payload.feedbackData, resStatus: true }
+            }
+            return { ...state, resStatus: false, resMessage: message }
+        }
+
+        case actionTypes.SEND_MESSAGE: {
+            console.log("admin reducer send messages")
+            return { ...state, resMessage: message, resStatus: isSuccess }
+        }
+
         case actionTypes.CLEAR_MESSAGE: {
             return { ...state, resMessage: "", resStatus: false, isDeleted: false }
         }
@@ -36,6 +53,9 @@ const adminReducer = (state = initialState, action) => {
             return { ...state, resStatus: false, resMessage: message }
         }
 
+        case actionTypes.DELETE_FEEDBACK: {
+            return { ...state, resMessage: message, resStatus: isSuccess }
+        }
         case actionTypes.UPDATE_USER_STATUS: {
             if (isSuccess) {
                 return { state, resStatus: true, resMessage: message, userDetails }

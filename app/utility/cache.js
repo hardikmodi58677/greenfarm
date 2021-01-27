@@ -34,7 +34,6 @@ const getData = async (key) => {
         }
         return item.value
     } catch (error) {
-        console.log("error", error)
         return null
     }
 }

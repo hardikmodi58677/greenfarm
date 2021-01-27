@@ -7,7 +7,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function ListItem(props) {
   const {
-    from,
     title,
     subTitle,
     image,

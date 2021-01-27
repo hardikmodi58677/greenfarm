@@ -4,7 +4,7 @@ import * as actionTypes from "../actions/types";
 const initialState = {
     sensorData: [],
     messages: [],
-    videos:[],
+    videos: [],
     resStatus: false,
     resMessage: ""
 }
@@ -17,6 +17,17 @@ const userReducer = (state = initialState, action) => {
                 return { ...state, sensorData: payload.sensorData }
             }
             return { ...state, resMessage: message }
+        }
+
+        case actionTypes.SEND_FEEDBACK:{
+            return { ...state, resMessage: message, resStatus: isSuccess }
+        }
+        case actionTypes.CLEAR_MESSAGE: {
+            return { ...state, resMessage: "", resStatus: false }
+        }
+
+        case actionTypes.SEND_MESSAGE: {
+            return { ...state, resMessage: message, resStatus: isSuccess }
         }
 
         case actionTypes.GET_USER_MESSAGES: {
