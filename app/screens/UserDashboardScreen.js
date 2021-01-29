@@ -4,25 +4,23 @@ import Screen from "../components/Screen";
 import Card from "../components/Card";
 import colors from "../config/colors";
 import { useDispatch, useSelector } from "react-redux";
-import { getSensorData } from "../actions/user"
+import { getSensorData, clearResMessage } from "../actions/admin"
 import { showMessage } from "react-native-flash-message";
 import LottieView from "lottie-react-native"
-
+import ErrorMessage from "../components/forms/ErrorMessage";
 
 
 export default function UserDashboard({ navigation }) {
-  const [sensorData, setSensorData] = useState([])
-  const [error, setError] = useState(false)
+  const [list, setList] = useState([])
+  const [errorMessage, setErrorMessage] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const [refreshing, setRefreshing] = useState(false);
 
   const dispatch = useDispatch()
-  const userState = useSelector(state => state.user)
-  const { resMessage = "", resStatus, sensorData: sensorDataState } = userState
-  const prevProps = useRef({ resMessage, sensorDataState }).current
-
-
+  const userState = useSelector(state => state.admin)
+  const { resMessage = "", resStatus, sensorDataList } = userState
+  const prevProps = useRef({ resMessage, sensorDataList }).current
 
 
   useEffect(() => {
@@ -31,21 +29,37 @@ export default function UserDashboard({ navigation }) {
   }, [])
 
   useEffect(() => {
-    if (prevProps.sensorDataState !== sensorDataState) {
-      if (sensorDataState && sensorDataState.length)
-        setSensorData(sensorDataState)
-      setLoading(false)
+    if (prevProps.sensorDataList !== sensorDataList) {
+      if (sensorDataList && sensorDataList.length) {
+        setList(sensorDataList)
+        setErrorMessage("")
+        setLoading(false)
+        dispatch(clearResMessage())
+      }
+      else {
+        setList([])
+        setLoading(false)
+        setErrorMessage("Sensor data not available.")
+      }
     }
     return () => {
-      prevProps.sensorDataState = sensorDataState
+      prevProps.sensorDataList = sensorDataList
     }
-  }, [sensorDataState])
+  }, [sensorDataList])
+
 
   useEffect(() => {
     if (prevProps.resMessage !== resMessage) {
-      if (resMessage && !resStatus) {
-        setLoading(false)
-        showMessage({ message: resMessage, duration: 2000, type: "danger" })
+      if (resMessage) {
+        if (resStatus) {
+          showMessage({ message: resMessage, floating: true, type: "success", duration: 1000 })
+          setLoading(false)
+          dispatch(clearResMessage())
+        }
+        else {
+          setLoading(false)
+          showMessage({ message: resMessage, duration: 2000, type: "danger" })
+        }
       }
     }
     return () => {
@@ -53,16 +67,9 @@ export default function UserDashboard({ navigation }) {
     }
   }, [resMessage, resStatus])
 
-
   return (
     <Screen style={styles.screen}>
-      {/* {error && <>
-      <AppText>
-        Could not retrive the listings
-       </AppText>
-      <AppButton title="Retry" onPress={() => loadListings()} />
-    </> */}
-      {/* } */}
+      {!!errorMessage && <ErrorMessage error={errorMessage} />}
       {
         loading && (
           <Modal visible={loading} style={styles.modal} transparent>
@@ -76,8 +83,8 @@ export default function UserDashboard({ navigation }) {
       }
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={sensorData}
-        keyExtractor={data => data.key}
+        data={list}
+        keyExtractor={data => data.sKey}
         renderItem={({ item }) => {
           return (
             (!item.temperature && !item.moisture && !item.humidity) ? null :
@@ -86,8 +93,6 @@ export default function UserDashboard({ navigation }) {
                   temperature={item.temperature == "0" || item.temperature ? `Temperature :${item.temperature}°C` : ""}
                   moisture={item.moisture == "0" || item.moisture ? `Moisture :${item.moisture} g/m³` : ""}
                   humidity={item.humidity == "0" || item.humidity ? `Humidity :${item.humidity} RH` : ""}
-                // imageUri={item.images[0]}
-                // thumbnailUrl={item.images[0]}
                 />
               ))
         }}

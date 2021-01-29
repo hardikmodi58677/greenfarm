@@ -7,7 +7,7 @@ import { AppForm, SubmitButton, AppFormField } from "../components/forms"
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, clearMessage } from "../actions/auth"
 import { showMessage } from "react-native-flash-message";
-import routes from "../navigation/routes";
+import colors from "../config/colors";
 
 export default function LoginScreen({ navigation }) {
   const validationSchema = Yup.object().shape({
@@ -63,7 +63,7 @@ export default function LoginScreen({ navigation }) {
         initialValues={{ email: "", password: "" }}
         onSubmit={async ({ email, password }, actions) => {
           setLoading(true)
-          dispatch(loginUser({ loginType: /\S+@\S+\.\S+/.test(email) ? "email" : "phoneNumber", loginId: email, password }))
+          dispatch(loginUser({ loginType: /\S+@\S+\.\S+/.test(email) ? "sEmail" : "sPhone", loginId: email, password }))
           setFormikActions(actions)
           // const result = await authApi.loginUser(email, password)
           // if (!result.isSuccess) {
@@ -90,7 +90,7 @@ export default function LoginScreen({ navigation }) {
           secureTextEntry
           textContent="password" //Only for ios
         />
-        <SubmitButton title="Login" />
+        <SubmitButton title="Login" style={{ backgroundColor: colors.secondary }} />
       </AppForm>
     </Screen>
   );

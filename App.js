@@ -16,6 +16,7 @@ const App = () => {
   const { user, isReady } = useSelector(state => state.auth)
   const dispatch = useDispatch()
 
+
   useEffect(() => {
     dispatch(getUserLoginStatus())
   }, [])
@@ -29,7 +30,7 @@ const App = () => {
     return (
       <NavigationContainer theme={navigationTheme}>
         {
-          user && user.role ? <AppNavigator role={user.role} /> : <AuthNavigator />
+          user?.eRole ? <AppNavigator role={user?.eRole} /> : <AuthNavigator />
         }
         < FlashMessage position="top" autoHide />
       </NavigationContainer>

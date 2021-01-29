@@ -1,22 +1,28 @@
 import React from "react";
+import { useRef } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import colors from "../config/colors";
 import AppText from "./AppText";
 
+
+
 function VideoCard(props) {
-    const { title, subtitle, creator, thumbnail, onPress, renderRightActions } = props;
+
+    const actionRef = (null)
+    const { title, subtitle, channelTitle, thumbnail, onPress, renderLeftActions } = props;
     return (
-        <Swipeable renderRightActions={renderRightActions}>
+        <Swipeable renderLeftActions={renderLeftActions} ref={actionRef}>
             <TouchableWithoutFeedback onPress={onPress}>
                 <View style={styles.card}>
                     <Image
                         style={styles.image}
-                        source={{ uri: thumbnail }} />
+                        source={{ uri: thumbnail }}
+                    />
                     <View style={styles.detailsContainer}>
-                        <AppText style={styles.title}>{`${title} -${creator}`}</AppText>
-                        <AppText style={styles.subTitle}>{subtitle}</AppText>
+                        <AppText style={styles.title}>{`${title}`}</AppText>
+                        <AppText style={styles.subTitle}>{channelTitle || ""}</AppText>
                     </View>
                 </View>
             </TouchableWithoutFeedback>
@@ -32,35 +38,35 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         height: 150,
+        borderRadius: 12,
         flexDirection: "row",
-        borderRadius: 18,
-        backgroundColor: "black",
+        backgroundColor: colors.black,
         marginBottom: 12,
-        borderColor: colors.primary,
+        borderColor: colors.danger,
         borderWidth: 2,
         overflow: "hidden"
     },
     detailsContainer: {
-        overflow: "scroll",
         flex: 1,
+        alignContent: "center",
+        alignItems: "center",
+        justifyContent: "space-evenly",
         display: "flex",
-        padding: 5,
     },
     image: {
-        display: "flex",
         resizeMode: "cover",
         width: "50%",
-        padding: 5,
+        margin: 5,
         height: 150,
     },
     subTitle: {
         color: colors.secondary,
-        fontSize: 10,
+        fontSize: 13,
     },
     title: {
         color: colors.primary,
         fontWeight: "bold",
-        fontSize: 15,
+        fontSize: 16,
         overflow: "scroll"
     },
 });

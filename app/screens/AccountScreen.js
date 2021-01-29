@@ -7,7 +7,7 @@ import Icon from "../components/Icon";
 import { logoutUser } from "../actions/auth"
 import { useDispatch, useSelector } from "react-redux";
 import { showMessage } from "react-native-flash-message";
-import { sendMessage, clearMessage } from "../actions/user"
+import { sendMessage, clearResMessage } from "../actions/admin"
 import routes from "../navigation/routes";
 import ListItemSeparator from "../components/ListItemSeparator"
 import { AppForm, SubmitButton, AppFormField } from "../components/forms"
@@ -23,7 +23,7 @@ export default function AccountScreen({ navigation }) {
   const authState = useSelector(state => state.auth)
   const { user } = authState
 
-  const userState = useSelector(state => state.user)
+  const userState = useSelector(state => state.admin)
   const { resMessage = "", resStatus } = userState
   const prevProps = useRef({ resMessage }).current
 
@@ -42,10 +42,10 @@ export default function AccountScreen({ navigation }) {
         if (resStatus) {
           showMessage({ message: resMessage, floating: true, type: "success", duration: 1500 })
           setLoading(false)
-          if(modalVisible){
+          if (modalVisible) {
             setModalVisible(false)
           }
-          dispatch(clearMessage())
+          dispatch(clearResMessage())
         }
         else {
           setLoading(false)
@@ -74,7 +74,7 @@ export default function AccountScreen({ navigation }) {
         name: "face",
         backgroundColor: colors.primary,
       },
-      onPress: () => navigation.navigate(routes.USER_DETAILS, { user })
+      onPress: () => navigation.navigate(routes.USER_DETAILS, { currentUser:user })
     },
     {
       title: "Logout",
@@ -104,24 +104,23 @@ export default function AccountScreen({ navigation }) {
           <ListItem
             image=""
             icon="user"
-            title={user.username}
-            subTitle={user.email}
+            title={user?.sUsername}
+            subTitle={user?.sEmail}
             image={require("../assets/images/userImage.jpg")}
-            phoneNumber={user.phoneNumber}
+            phoneNumber={user?.sPhone}
           />
         </View>
         <View style={styles.container}>
           <FlatList
             data={menuItems}
             ItemSeparatorComponent={ListItemSeparator}
-            keyExtractor={(item) => item.title.toString()}
+            keyExtractor={(item) => item.title}
             renderItem={({ item }) => {
-              if (item.title == "Feedback" && user.role != "user") {
+              if (item.title == "Feedback" && user?.eRole != "user") {
                 return null
               }
               else {
                 return (
-
                   <ListItem
                     title={item.title}
                     IconComponent={
@@ -152,7 +151,7 @@ export default function AccountScreen({ navigation }) {
                 initialValues={{ title: "", description: "" }}
                 onSubmit={async ({ title, description }) => {
                   setLoading(true)
-                  dispatch(sendMessage({ type: "feedback", title, description, senderId: user.key, senderName: user.role === "user" ? user.username : user.role }))
+                  dispatch(sendMessage({ type: "feedback", title, description, senderId: user?.sKey, senderName: user?.eRole === "user" ? user?.sUsername : user?.eRole }))
                 }}
                 validationSchema={messageValidationSchema}
               >

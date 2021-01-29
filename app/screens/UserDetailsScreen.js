@@ -5,39 +5,40 @@ import LottieView from "lottie-react-native"
 import Screen from "../components/Screen";
 import { AppForm, SubmitButton, AppFormField } from "../components/forms"
 import { useDispatch, useSelector } from "react-redux";
-import { updateUser, clearMessage, updateUserStatus, deleteUser, getUsersList, sendMessage } from "../actions/admin"
+import { updateUserProfile, clearResMessage, updateUserStatus, deleteUser, sendMessage } from "../actions/admin"
 import { useEffect } from "react";
 import { showMessage } from "react-native-flash-message";
 import routes from "../navigation/routes";
 import colors from "../config/colors";
 import AppButton from "../components/AppButton";
+import { clearMessage } from "../actions/auth";
 
 function UserDetailsScreen({ route, navigation }) {
-  const { user } = route.params
+  const { currentUser } = route.params
 
   const dispatch = useDispatch()
-  const adminState = useSelector(state => state.admin)
+  const userState = useSelector(state => state.admin)
   const authState = useSelector(state => state.auth)
-  const { role, key, username, email } = authState.user
-  const { resMessage, resStatus, isDeleted } = adminState
+  const { resMessage: authResMessage, resStatus: authResState } = authState
+  const { eRole: userRole, sKey: userKey, sUsername: username, sEmail: userEmail } = authState.user
+  const { resMessage, resStatus, isDeleted } = userState
 
-  const prevProps = useRef({ resMessage }).current
+  const prevProps = useRef({ resMessage, authResMessage }).current
 
   const phoneRegExp = /^[6-9]\d{9}$/
   const validationSchema = Yup.object().shape({
-    username: Yup.string().required().label("Name"),
-    email: Yup.string().required().email().label("Email"),
-    phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').required().label("Phone number"),
+    sUsername: Yup.string().required().label("Name"),
+    sEmail: Yup.string().required().email().label("Email"),
+    sPhone: Yup.string().matches(phoneRegExp, 'Phone number is not valid').required().label("Phone number"),
   });
 
   const messageValidationSchema = Yup.object().shape({
-    title: Yup.string().required().label("Tfitle").min(8),
-    description: Yup.string().required().label("Description").min(14),
+    title: Yup.string().required().label("Title").min(10),
+    description: Yup.string().required().label("Description"),
   });
 
-  // const [errMessage, setErrMessage] = useState("")
   const [loading, setLoading] = useState(false)
-  const [isActive, setIsActive] = useState(user.isActive == undefined ? true : user.isActive)
+  const [isActive, setIsActive] = useState(currentUser?.bIsActive == undefined ? true : !!currentUser?.bIsActive)
   const [modalVisible, setModalVisible] = useState(false);
 
 
@@ -45,6 +46,31 @@ function UserDetailsScreen({ route, navigation }) {
     setIsActive(!isActive)
     dispatch(updateUserStatus(userKey, !isActive))
   }
+
+
+  useEffect(() => {
+    if (prevProps.authResMessage !== authResMessage) {
+      if (authResMessage) {
+        if (authResState) {
+          showMessage({ message: authResMessage, floating: true, type: "success", duration: 1000 })
+          if (modalVisible) {
+            setModalVisible(false)
+          }
+          setLoading(false)
+          dispatch(clearMessage())
+        }
+        else {
+          setLoading(false)
+          showMessage({ message: authResMessage, duration: 2000, type: "danger" })
+          dispatch(clearMessage())
+        }
+      }
+    }
+    return () => {
+      prevProps.authResMessage = authResMessage
+    }
+
+  }, [authResMessage, authResState])
 
   useEffect(() => {
     if (prevProps.resMessage !== resMessage) {
@@ -54,16 +80,14 @@ function UserDetailsScreen({ route, navigation }) {
           if (modalVisible) {
             setModalVisible(false)
           }
+          if (isDeleted) { navigation.navigate(routes.USER_LIST) }
           setLoading(false)
-          if (isDeleted) {
-            navigation.navigate(routes.USER_LIST)
-          }
-          dispatch(clearMessage())
-          dispatch(getUsersList())
+          dispatch(clearResMessage())
         }
         else {
           setLoading(false)
           showMessage({ message: resMessage, duration: 2000, type: "danger" })
+          dispatch(clearResMessage())
         }
       }
     }
@@ -94,21 +118,21 @@ function UserDetailsScreen({ route, navigation }) {
 
 
           <AppForm
-            initialValues={{ username: user.username, email: user.email, phoneNumber: user.phoneNumber }}
-            onSubmit={async ({ username, email, phoneNumber }) => {
+            initialValues={{ sUsername: currentUser.sUsername, sEmail: currentUser.sEmail, sPhone: currentUser.sPhone }}
+            onSubmit={async ({ sUsername, sEmail, sPhone }) => {
               setLoading(true)
-              dispatch(updateUser({ key: user.key, username, email, phoneNumber, }))
+              dispatch(updateUserProfile({ sKey: currentUser.sKey, sUsername, sEmail, sPhone, type: userEmail !== sEmail ? "admin" : "user" }))
             }}
             validationSchema={validationSchema}
           >
             <AppFormField
-              name="email"
+              name="sEmail"
               placeholder="Email"
               editable={false}
               iconName="email"
             />
             <AppFormField
-              name="username"
+              name="sUsername"
               placeholder="Username"
               autoCapitalize="none"
               autoCorrect={false}
@@ -117,20 +141,20 @@ function UserDetailsScreen({ route, navigation }) {
             />
 
             <AppFormField
-              name="phoneNumber"
+              name="sPhone"
               placeholder="Phone Number"
               iconName="phone"
               keyboardType="number-pad"
               textContent="telephoneNumber" //Only for ios
             />
             {
-              (role == "admin" && user.email!==email) && (
+              (userRole == "admin" && currentUser.sEmail !== userEmail) && (
                 <View style={styles.switch}>
                   <Text >{`User Status`} </Text>
                   <Switch
                     trackColor={{ false: colors.medium, true: colors.secondary }}
                     thumbColor={isActive ? colors.secondary : colors.danger}
-                    onValueChange={() => toggleUserStatus(user.key, isActive)}
+                    onValueChange={() => toggleUserStatus(currentUser.sKey, isActive)}
                     value={isActive}
                   />
                   <Text >{isActive ? "Active" : "Inactive"} </Text>
@@ -139,16 +163,16 @@ function UserDetailsScreen({ route, navigation }) {
             }
             <SubmitButton style={styles.submitBtn} title="Update details" />
           </AppForm>
-          {(role == "admin" && user.email!==email) && (
+          {(userRole == "admin" && currentUser.sEmail !== userEmail) && (
             <View style={styles.btnContainer}>
-              <AppButton style={styles.deleteBtn} title="Delete" onPress={() => dispatch(deleteUser(user.key))} />
+              <AppButton style={styles.deleteBtn} title="Delete" onPress={() => dispatch(deleteUser(currentUser.sKey))} />
               <AppButton style={{ ...styles.deleteBtn, backgroundColor: colors.primary }} title="Message" onPress={() => setModalVisible(!modalVisible)} />
             </View>
           )}
         </ScrollView>
       </Screen >
       {
-        role == "admin" && (
+        userRole == "admin" && (
           <Fragment>
             <Modal
               animationType="slide"
@@ -161,7 +185,7 @@ function UserDetailsScreen({ route, navigation }) {
                     initialValues={{ title: "", description: "" }}
                     onSubmit={async ({ title, description }) => {
                       setLoading(true)
-                      dispatch(sendMessage({ senderId: key, senderName: role == "user" ? username : role, receiverId: user.key, title, description, isReply: false }))
+                      dispatch(sendMessage({ senderId: userKey, senderName: userRole == "user" ? username : userRole, receiverId: currentUser.sKey, title, description, isReply: false, type: "message" }))
                     }}
                     validationSchema={messageValidationSchema}
                   >

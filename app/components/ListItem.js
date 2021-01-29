@@ -22,7 +22,7 @@ export default function ListItem(props) {
           {IconComponent}
           {image && <Image style={styles.image} source={require("../assets/images/userImage.jpg")} />}
           <View style={styles.detailsContainer}>
-            <AppText numberOfLines={1} style={styles.title}>{title}</AppText>
+            {title && <AppText numberOfLines={1} style={styles.title}>{title}</AppText>}
             {subTitle && <AppText numberOfLines={2} style={styles.subTitle}>{subTitle}</AppText>}
             {phoneNumber && <AppText numberOfLines={2} style={styles.subTitle}>{phoneNumber}</AppText>}
           </View>

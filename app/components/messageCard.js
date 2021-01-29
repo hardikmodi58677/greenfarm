@@ -3,24 +3,21 @@ import { StyleSheet, View, Image, TouchableHighlight } from "react-native";
 import AppText from "./AppText";
 import colors from "../config/colors";
 import Swipeable from "react-native-gesture-handler/Swipeable";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function ListItem(props) {
   const {
     from,
     title,
     subTitle,
-    image,
-    IconComponent,
     onPress,
+    renderLeftActions,
     renderRightActions,
     phoneNumber
   } = props;
   return (
-    <Swipeable renderRightActions={renderRightActions}>
-      <TouchableHighlight underlayColor={colors.light} onPress={onPress}>
+    <Swipeable renderLeftActions={renderLeftActions} renderRightActions={renderRightActions}>
+      <TouchableHighlight onPress={onPress}>
         <View style={styles.container}>
-          {IconComponent}
           {<Image style={styles.image} source={require("../assets/images/userImage.jpg")} />}
           <View style={styles.detailsContainer}>
             <AppText numberOfLines={1} style={styles.title}>{from ? `${title} - ${from}` : title}</AppText>

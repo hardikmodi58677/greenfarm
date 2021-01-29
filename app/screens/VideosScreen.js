@@ -1,12 +1,12 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { StyleSheet, FlatList, Linking, Modal, View, Text, TouchableHighlight } from "react-native";
+import { StyleSheet, FlatList, Linking, Modal, View, TouchableHighlight } from "react-native";
 import Screen from "../components/Screen";
 import VideoCard from "../components/VideoCard";
 import colors from "../config/colors";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserVideos } from "../actions/user"
+import { addVideo, deleteVideo, getVideos, clearResMessage } from "../actions/admin"
 import { showMessage } from "react-native-flash-message";
-import { FloatingAction } from "react-native-floating-action";
+import ErrorMessage from "../components/forms/ErrorMessage";
 import ListItemDeleteAction from "../ListItemDeleteAction";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import * as Yup from "yup";
@@ -17,83 +17,87 @@ import LottieView from "lottie-react-native"
 
 
 
-
-
-
 export default function VideosScreen({ navigation, role }) {
-    const [videoList, setVideoList] = useState([])
-    const [error, setError] = useState(false)
+    const [list, setList] = useState([])
+    const [errorMessage, setErrorMessage] = useState("")
     const [loading, setLoading] = useState(false)
 
     const [refreshing, setRefreshing] = useState(false);
 
     const dispatch = useDispatch()
-    const userState = useSelector(state => state.user)
-    const { resMessage = "", resStatus, videos } = userState
-    const prevProps = useRef({ resMessage, videos }).current
+    const userState = useSelector(state => state.admin)
+    const { resMessage = "", resStatus, videoList } = userState
+    const prevProps = useRef({ resMessage, videoList }).current
     const [modalVisible, setModalVisible] = useState(false);
-    const [floatingBtnVisible, setFloatingBtnVisible] = useState(true);
 
-
-
-
-
-    const videoRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/
+    const videoRegex = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
     const validationSchema = Yup.object().shape({
-        videoUrl: Yup.string().matches(videoRegex, 'Video url is invalid.').required().label("video url")
+        videoUrl: Yup.string().matches(videoRegex, 'Video url is invalid.').required().label("Video url")
     });
-
-    const [formikActions, setFormikActions] = useState(null)
-
 
 
 
 
     const handleDelete = (videoKey) => {
+        setLoading(true)
         dispatch(deleteVideo(videoKey))
     };
 
-
-    useEffect(() => {
-        if (modalVisible) {
-            setFloatingBtnVisible(false)
-        }
-    }, [modalVisible])
-
-
     useEffect(() => {
         setLoading(true)
-        dispatch(getUserVideos())
+        dispatch(getVideos())
     }, [])
 
     useEffect(() => {
-        if (prevProps.videos !== videos) {
-            if (videos && videos.length) {
-                setVideoList(videos)
+        if (prevProps.videoList !== videoList) {
+            if (videoList && videoList.length) {
+                setList(videoList)
+                setErrorMessage("")
                 setLoading(false)
+                dispatch(clearResMessage())
+            }
+            else {
+                setList([])
+                setLoading(false)
+                setErrorMessage("No videos available.")
             }
         }
-
         return () => {
-            prevProps.videos = videos
+            prevProps.videoList = videoList
         }
-    }, [videos])
+    }, [videoList])
+
 
     useEffect(() => {
         if (prevProps.resMessage !== resMessage) {
-            if (resMessage && !resStatus) {
-                setLoading(false)
-                showMessage({ message: resMessage, duration: 2000, type: "danger" })
+            if (resMessage) {
+                if (resStatus) {
+                    showMessage({ message: resMessage, floating: true, type: "success", duration: 1000 })
+                    setLoading(false)
+                    dispatch(clearResMessage())
+                    if (modalVisible) {
+                        setModalVisible(false)
+                        dispatch(getVideos())
+                    }
+                }
+                else {
+                    setLoading(false)
+                    showMessage({ message: resMessage, duration: 2000, type: "danger" })
+                    dispatch(clearResMessage)
+                }
             }
         }
         return () => {
             prevProps.resMessage = resMessage
         }
+
     }, [resMessage, resStatus])
+
 
 
     return (
         <Screen style={styles.screen}>
+            {!!errorMessage && <ErrorMessage error={errorMessage} />}
             {
                 loading && (
                     <Modal visible={loading} style={styles.modal} transparent>
@@ -108,24 +112,24 @@ export default function VideosScreen({ navigation, role }) {
 
             <FlatList
                 showsVerticalScrollIndicator={false}
-                data={videoList}
-                keyExtractor={data => data.url}
-                renderItem={({ item }) => {
+                data={list}
+                keyExtractor={video => video.sKey}
+                renderItem={({ item: video }) => {
                     return (
                         <VideoCard
-                            title={item.title}
-                            subtitle={item.description}
-                            creator={item.creator}
-                            thumbnail={item.thumbnail}
-                            onPress={async () => await Linking.openURL(item.url)}
-                            renderRightActions={role === "admin" ? () => (<ListItemDeleteAction onPress={() => handleDelete(item.key)} />) : null}
+                            title={video.sTitle}
+                            subtitle={video.sDescription}
+                            channelTitle={video.sChannelTitle}
+                            thumbnail={video.sThumbnail}
+                            onPress={async () => await Linking.openURL(video.sUrl)}
+                            renderLeftActions={role === "admin" ? () => (<ListItemDeleteAction style={{ height: 150 }} onPress={() => handleDelete(video.sKey)} />) : null}
                         />
                     )
                 }}
                 refreshing={refreshing}
                 onRefresh={async () => {
                     setRefreshing(true)
-                    dispatch(getUserVideos())
+                    dispatch(getVideos())
                     setRefreshing(false)
                 }}
             />
@@ -147,9 +151,8 @@ export default function VideosScreen({ navigation, role }) {
                                 <View style={styles.modalView}>
                                     <AppForm
                                         initialValues={{ videoUrl: "" }}
-                                        onSubmit={async ({ videoUrl }, actions) => {
-                                            console.log("videoUrl", videoUrl)
-                                            setFormikActions(actions)
+                                        onSubmit={async ({ videoUrl }) => {
+                                            ("videoUrl is", videoUrl)
                                             setLoading(true)
                                             dispatch(addVideo({ videoUrl }))
                                         }}
@@ -180,8 +183,8 @@ export default function VideosScreen({ navigation, role }) {
 
 const styles = StyleSheet.create({
     screen: {
-        paddingVertical: 10,
         paddingHorizontal: 10,
+        paddingVertical: 10,
         backgroundColor: colors.light
     },
     centeredView: {

@@ -21,8 +21,8 @@ export default function RegisterScreen({ navigation }) {
 
     const phoneRegExp = /^[6-9]\d{9}$/
     const validationSchema = Yup.object().shape({
-        username: Yup.string().required().label("Name"),
         email: Yup.string().required().email().label("Email"),
+        username: Yup.string().required().label("Name"),
         password: Yup.string().required().min(6).label("Password"),
         phoneNumber: Yup.string().matches(phoneRegExp, 'Phone number is not valid').required().label("Phone number")
     });

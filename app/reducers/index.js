@@ -6,7 +6,6 @@ import adminReducer from "./admin"
 
 const rootReducer = combineReducers({
     auth: authReducer,
-    user: userReducer,
     admin: adminReducer
 })
 

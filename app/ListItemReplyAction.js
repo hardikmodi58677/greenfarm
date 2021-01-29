@@ -15,9 +15,9 @@ export default function ListItemReplyAction({ onPress }) {
 
 const styles = StyleSheet.create({
   replyAction: {
-    borderTopRightRadius: 18,
     borderBottomRightRadius: 18,
-    height: 150,
+    borderTopRightRadius: 18,
+    height: "100%",
     backgroundColor: colors.primary,
     width: 100,
     justifyContent: "center",

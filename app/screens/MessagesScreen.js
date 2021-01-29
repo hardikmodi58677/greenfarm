@@ -6,7 +6,7 @@ import AppButton from "../components/AppButton";
 import LottieView from "lottie-react-native"
 import Screen from "../components/Screen";
 import ListItemSeparator from "../components/ListItemSeparator";
-import { getUserMessages, sendMessage, clearMessage } from "../actions/user"
+import { getMessageList, sendMessage, clearResMessage } from "../actions/admin"
 import { useDispatch, useSelector } from "react-redux";
 import { showMessage } from "react-native-flash-message";
 import ErrorMessage from "../components/forms/ErrorMessage";
@@ -19,7 +19,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 function MessagesScreen() {
   const [refreshing, setRefreshing] = useState(false);
-  const [messages, setMessages] = useState(null)
+  const [list, setList] = useState(null)
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
   const [messageReceiver, setMessageReceiver] = useState("Admin")
@@ -27,12 +27,12 @@ function MessagesScreen() {
 
   const dispatch = useDispatch()
   const { user: currentUser } = useSelector(state => state.auth)
-  const userState = useSelector(state => state.user)
-  const { resMessage = "", resStatus, messages: userMessages } = userState
-  const prevProps = useRef({ resMessage, userMessages }).current
+  const userState = useSelector(state => state.admin)
+  const { resMessage = "", resStatus, messageList } = userState
+  const prevProps = useRef({ resMessage, messageList }).current
 
   const messageValidationSchema = Yup.object().shape({
-    title: Yup.string().required().label("Tfitle").min(5).max(10),
+    title: Yup.string().required().label("Title").min(5).max(10),
     description: Yup.string().required().label("Description").min(10).max(20),
   });
 
@@ -44,19 +44,37 @@ function MessagesScreen() {
 
   useEffect(() => {
     setLoading(true)
-    dispatch(getUserMessages())
+    dispatch(getMessageList())
   }, [])
 
   const handleReply = (message) => {
     setModalVisible(!modalVisible)
     setIsReply(true)
-    setReceiverId(message.senderId || null)
+    setReceiverId(message.sSenderId || null)
   }
 
   const toggleMessageReceiver = () => {
     setMessageReceiver(msgReceiver => msgReceiver == "Admin" ? "Expert" : "Admin")
     // dispatch(updateUserStatus(userKey, !isActive))
   }
+
+
+  useEffect(() => {
+    if (prevProps.messageList !== messageList) {
+      if (messageList && messageList.length) {
+        setList(messageList)
+        setErrorMessage("")
+        setLoading(false)
+      }
+      else {
+        setLoading(false)
+        setErrorMessage("No messages available.")
+      }
+    }
+    return () => {
+      prevProps.messageList = messageList
+    }
+  }, [messageList])
 
   useEffect(() => {
     if (prevProps.resMessage !== resMessage) {
@@ -67,8 +85,8 @@ function MessagesScreen() {
             setModalVisible(false)
           }
           setLoading(false)
-          dispatch(clearMessage())
-          dispatch(getUserMessages())
+          dispatch(clearResMessage())
+          dispatch(getMessageList())
         }
         else {
           setLoading(false)
@@ -82,26 +100,10 @@ function MessagesScreen() {
 
   }, [resMessage, resStatus])
 
-  useEffect(() => {
-    if (prevProps.userMessages !== userMessages) {
-      setLoading(false)
-      if (userMessages && userMessages.length) {
-        setErrorMessage("")
-        setMessages(userMessages)
-      }
-      else {
-        setMessages([])
-        setErrorMessage("No messages yet.")
-      }
-    }
-    return () => {
-      prevProps.userMessages = userMessages
-    }
-  }, [userMessages])
 
   return (
     <Fragment>
-      <Screen>
+      <Screen style={styles.screen}>
         {!!errorMessage && <ErrorMessage style={styles.errorText} error={errorMessage} />}
         {
           loading && (
@@ -116,17 +118,17 @@ function MessagesScreen() {
         }
         <FlatList
           scrollEnabled
-          data={messages}
-          keyExtractor={(message) => message.key}
-          renderItem={({ item }) => {
+          data={list}
+          keyExtractor={(message) => message.sKey}
+          renderItem={({ item: message }) => {
             return (
               <MessageCard
-                from={item.senderName}
-                title={item.title}
-                subTitle={item.description}
-                image={item.image}
-                onPress={() => Alert.alert(item.title, item.description)}
-                renderRightActions={() => (<ListItemReplyAction onPress={() => handleReply(item)} />)}
+                from={message.sSenderName}
+                title={message.sTitle}
+                subTitle={message.sDescription}
+                image={message.sImage}
+                onPress={() => Alert.alert(message.sTitle, message.sDescription)}
+                renderRightActions={() => (<ListItemReplyAction onPress={() => handleReply(message)} />)}
               />
             );
           }}
@@ -134,7 +136,7 @@ function MessagesScreen() {
           refreshing={refreshing}
           onRefresh={() => {
             setRefreshing(true)
-            dispatch(getUserMessages())
+            dispatch(getMessageList())
             setRefreshing(false)
 
           }}
@@ -152,7 +154,7 @@ function MessagesScreen() {
                 initialValues={{ title: "", description: "" }}
                 onSubmit={async ({ title, description }) => {
                   setLoading(true)
-                  dispatch(sendMessage({ senderId: currentUser.key, senderName: currentUser.role == "user" ? currentUser.username : currentUser.role, receiverId, title, description, isReply, receiver: messageReceiver }))
+                  dispatch(sendMessage({ senderId: currentUser.sKey, senderName: currentUser.eRole == "user" ? currentUser.sUsername : currentUser.eRole, receiverId, title, description, isReply, receiver: currentUser.eRole == "user" && !isReply ? messageReceiver : null }))
                   setReceiverId(null)
                 }}
                 validationSchema={messageValidationSchema}
@@ -172,7 +174,7 @@ function MessagesScreen() {
                   iconName="message"
                   keyboardType="default" //Only for ios
                 />
-                {!isReply && currentUser.role == "user" && (
+                {!isReply && currentUser.eRole == "user" && (
                   <View style={styles.switch}>
                     <Text >{`Send Message to`} </Text>
                     <Switch
@@ -194,7 +196,7 @@ function MessagesScreen() {
         </Modal>
       </Fragment>
       {
-        currentUser.role === "user" && (
+        currentUser.eRole === "user" && (
           <TouchableHighlight
             style={styles.floatingBtn}
             onPress={() => { setModalVisible(true); setIsReply(false) }}>
@@ -207,9 +209,11 @@ function MessagesScreen() {
 }
 
 const styles = StyleSheet.create({
-  errorText: {
-    fontSize: 25,
-    color: colors.danger,
+
+  screen: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    backgroundColor: colors.light
   },
   switch: {
     fontWeight: "bold",

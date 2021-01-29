@@ -19,10 +19,11 @@ const userReducer = (state = initialState, action) => {
             return { ...state, resMessage: message }
         }
 
-        case actionTypes.SEND_FEEDBACK:{
+        case actionTypes.SEND_FEEDBACK: {
             return { ...state, resMessage: message, resStatus: isSuccess }
         }
         case actionTypes.CLEAR_MESSAGE: {
+            console.log("clear message user reducer called")
             return { ...state, resMessage: "", resStatus: false }
         }
 
@@ -30,16 +31,14 @@ const userReducer = (state = initialState, action) => {
             return { ...state, resMessage: message, resStatus: isSuccess }
         }
 
+        case actionTypes.ADD_VIDEO: {
+            console.log("Add video reducer user called");
+            return { ...state, resMessage: message, resStatus: isSuccess }
+        }
+
         case actionTypes.GET_USER_MESSAGES: {
             if (isSuccess) {
                 return { ...state, messages: payload.messages }
-            }
-            return { ...state, resMessage: message }
-        }
-
-        case actionTypes.GET_USER_VIDEOS: {
-            if (isSuccess) {
-                return { ...state, videos: payload.videos }
             }
             return { ...state, resMessage: message }
         }

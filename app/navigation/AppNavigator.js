@@ -10,7 +10,7 @@ import FeedbackScreen from '../screens/FeedbackScreen'
 import VideosScreen from "../screens/VideosScreen"
 import UsersListScreen from "../screens/UsersListScreen"
 import UserSectionNavigator from "../navigation/UsersNavigator"
-import { MaterialIcons } from '@expo/vector-icons'; 
+import { MaterialIcons } from '@expo/vector-icons';
 
 
 const Tab = createBottomTabNavigator()
@@ -23,13 +23,15 @@ const AppNavigator = ({ role }) => (
                 <Tab.Screen
                     name={routes.USER_LIST}
                     children={() => <UserSectionNavigator />}
-                    options={{ tabBarIcon: ({ color, size }) => <FontAwesome5 name="users" color={color} size={size} /> }}
+                    options={{
+                        tabBarIcon: ({ color, size }) => <FontAwesome5 name="users" color={color} size={size} />,
+
+                    }}
                 />
                 <Tab.Screen
                     name={routes.USER_FEEDBACK}
                     children={() => <FeedbackScreen />}
-                    
-                    options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="feedback" color={color} size={size} />}}
+                    options={{ tabBarIcon: ({ color, size }) => <MaterialIcons name="feedback" color={color} size={size} /> }}
                 />
             </>
         }
