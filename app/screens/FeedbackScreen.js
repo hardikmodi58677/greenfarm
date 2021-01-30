@@ -107,7 +107,6 @@ function FeedbackScreen() {
                 onPress={() => Alert.alert(feedback.sTitle, feedback.sDescription)}
                 renderLeftActions={() => (<ListItemDeleteAction onPress={() => {
                   handleDelete(feedback)
-                  console.log("handleMessageCalled")
                   this.close()
                 }} />)}
               />

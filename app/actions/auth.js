@@ -52,63 +52,6 @@ export const clearMessage = () => (dispatch) => {
     dispatch({ type: actionTypes.CLEAR_MESSAGE })
 }
 
-// export const verifyOtp = ({ otpCode, verificationId }) => dispatch => {
-//     const credential = auth.PhoneAuthProvider.credential(verificationId, otpCode)
-//     auth().signInWithCredential(credential)
-//         .then(result => {
-//             if (!result.user.email) {
-//                 dispatch({ type: actionTypes.OTP_VERIFIED, isSuccess: true, message: "OTP verified.", isUserRegistered: false })
-//                 // result.user.updateEmail("hardikmodi5867@gmail.com")
-//                 //     .then(res => {
-//                 //         console.log("email updated", res)
-//                 //         console.log("email", auth().currentUser.email)
-//                 //     })
-//                 //     .catch(err => {
-//                 //         console.log('err updating email', err.message)
-//                 //     })
-//             }
-//             else {
-//                 console.log("Already exists", result.user)
-//                 dispatch({ type: actionTypes.OTP_VERIFIED, isSuccess: true, message: "OTP verified.", isUserRegistered: true, user: result.user })
-//                 // console.log("Already exists", result.user.phoneNumber)
-//                 // database().ref("/users").orderByChild("phoneNumber").equalTo(result.user.phoneNumber.substring(3)).once("value", snapshot => {
-//                 //     if (snapshot.exists()) {
-//                 //         console.log("existing user details", snapshot.val())
-//                 //         // dispatch({
-//                 //         //     type: actionTypes.REGISTER_USER,
-//                 //         actionTypes.//     isSuccess: false,
-//                 //         //     message: "This mobile number is already is use with another account."
-//                 //         // })
-//                 //     }
-//                 // })
-//             }
-
-
-
-
-//             // result.user.pro
-//         })
-//         .catch(err => {
-//             console.log("err", err.message)
-//             dispatch({ type: actionTypes.OTP_VERIFIED, isSuccess: false, message: "Entered OTP is invalid.Please try again." })
-//         })
-// }
-
-
-
-// export const sendOtp = ({ phoneNumber, verifierRef }) => (dispatch) => {
-//     const phoneProvider = new auth.PhoneAuthProvider()
-//     phoneProvider
-//         .verifyPhoneNumber(`+91${phoneNumber}`, verifierRef)
-//         .then(verificationId => {
-//             console.log("otp sent")
-//             dispatch({ type: actionTypes.SEND_OTP, payload: { verificationId }, isSuccess: true })
-//         }).catch(err => {
-//             console.log('err', err)
-//             dispatch({ type: actionTypes.SEND_OTP, message: err.message, isSuccess: false })
-//         });
-// }
-
 export const loginUser = ({ loginType: sLoginType = "sEmail", loginId: sLoginId = "", password: sPassword = "" }) => dispatch => {
     dispatch({ type: actionTypes.CLEAR_MESSAGE })
     database().ref("/users").orderByChild(sLoginType).equalTo(sLoginId).once("value", snapshot => {
@@ -143,37 +86,6 @@ export const loginUser = ({ loginType: sLoginType = "sEmail", loginId: sLoginId 
     })
 }
 
-// export const loginUser = ({ phoneNumber }) => (dispatch) => {
-//     // dispatch({ type: "CLEAR_MESSAGE" })
-//     database().ref("/users").orderByChild("phoneNumber").equalTo(phoneNumber).once("value", snapshot => {
-//         if (snapshot.exists()) {
-//             const user = snapshot.val()
-//             console.log("usr", user)
-
-//             auth().verifyP
-
-//             // dispatch({
-//             //     type: "actionTypes.REGISTER_USER",
-// actionTypes.//             //     isSuccess: false,
-//             //     message: "This mobile number is already is use with another account."
-//             // })
-//         }
-//         else {
-//             dispatch({
-//                 type: "VALIDATE_OTP",
-//                 isSuccess: false,
-//                 message: "Mobile number doesnt belong to any user."
-//             })
-
-//         }
-
-
-//     }).then(data => {
-//         console.log("data repeat", data)
-//     }).catch(err => {
-//         console.log('err', err)
-//     })
-// }
 
 
 export const registerUser = ({ username: sUsername, email: sEmail, password: sPassword, phoneNumber: sPhone }) => (dispatch) => {
@@ -199,13 +111,7 @@ export const registerUser = ({ username: sUsername, email: sEmail, password: sPa
                     auth()
                         .createUserWithEmailAndPassword(sEmail, sPassword)
                         .then((result) => {
-                            console.log("user registered", result)
-                            // result.user.updatePhoneNumber(`+91${phoneNumber}`).then(res => {
-                            //     console.log("currentUser", auth().currentUser)
-                            //     console.log("updateProfile", res)
-                            // }).catch(err => {
-                            //     console.log("updateProfile err", err)
-                            // })
+                          
                             database().ref("/users").push({ sUsername: sUsername, sEmail, sPhone: sPhone, eRole: "user", dCreatedAt: Date.now(), bIsActive: true })
                                 .then((data) => {
                                     if (data) {
@@ -236,7 +142,6 @@ export const registerUser = ({ username: sUsername, email: sEmail, password: sPa
         }
     })
         .catch(err => {
-            console.log("db error", err)
             dispatch({
                 type: actionTypes.REGISTER_USER,
                 isSuccess: false,

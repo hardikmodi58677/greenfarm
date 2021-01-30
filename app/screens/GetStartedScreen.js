@@ -78,13 +78,7 @@ export default function GetStartedScreen({ navigation }) {
               <AppForm
                 initialValues={{ otpCode: "" }}
                 onSubmit={async ({ otpCode }) => {
-                  // firebaseObj.firebase.auth().verifyPhoneNumber(phoneNumber).then(status => { console.log("status", status) })
                   dispatch(verifyOtp({ otpCode, verificationId }))
-                  // const result = await authApi.loginUser(email, password)
-                  // if (!result.isSuccess) {
-                  //   setErrorMessage(result.errorMessage)
-                  // }
-                  // setUser(result.user)
                 }}
                 validationSchema={validationSchemaOtp}
               >
@@ -105,13 +99,7 @@ export default function GetStartedScreen({ navigation }) {
               <AppForm
                 initialValues={{ phoneNumber: "" }}
                 onSubmit={async ({ phoneNumber }) => {
-                  // firebaseObj.firebase.auth().verifyPhoneNumber(phoneNumber).then(status => { console.log("status", status) })
                   dispatch(sendOtp({ phoneNumber, verifierRef: verifierRef.current }))
-                  // const result = await authApi.loginUser(email, password)
-                  // if (!result.isSuccess) {
-                  //   setErrorMessage(result.errorMessage)
-                  // }
-                  // setUser(result.user)
                 }}
                 validationSchema={validationSchemaPhone}
               >

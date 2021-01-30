@@ -19,7 +19,6 @@ const authReducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.GET_LOGIN_STATUS: {
             if (isSuccess) {
-                // console.log("action user ", action.user, user)
                 cache.storeData("user", action.payload.user)
                 return { ...state, user: action.payload.user, isReady: true }
             }
@@ -34,7 +33,6 @@ const authReducer = (state = initialState, action) => {
         }
 
         case actionTypes.UPDATE_PROFILE: {
-            console.log("update profile auth reducer called")
             if (!isSuccess) {
                 return { ...state, resStatus: isSuccess, resMessage: message }
             }
@@ -46,7 +44,6 @@ const authReducer = (state = initialState, action) => {
                 return { ...state, resMessage: message, resStatus: isSuccess }
             }
             cache.storeData("user", action.payload.user)
-            console.log("user", action.payload.user)
             return { ...state, resMessage: message, resStatus: isSuccess, user: action.payload.user }
         }
 
@@ -55,7 +52,6 @@ const authReducer = (state = initialState, action) => {
         }
 
         case actionTypes.CLEAR_MESSAGE: {
-            console.log("clear message auth reducer called")
             return { ...state, resMessage: "", resStatus: false }
         }
 

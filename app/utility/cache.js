@@ -11,7 +11,6 @@ const storeData = async (key, value) => {
         await AsyncStorage.setItem(prefix + key, JSON.stringify(item))
     }
     catch (err) {
-        console.log("err", err)
     }
 }
 

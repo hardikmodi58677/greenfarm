@@ -18,14 +18,6 @@ const adminReducer = (state = initialState, action) => {
     const { isSuccess = false, message = "", type } = action
     switch (type) {
 
-        // case actionTypes.GET_LOGIN_STATUS: {
-        //     if (isSuccess) {
-        //         // console.log("action user ", action.user, user)
-        //         cache.storeData("user", user)
-        //         return { ...state, user }
-        //     }
-        //     return { ...state, user: null }
-        // }
 
         case actionTypes.SEND_FEEDBACK: {
             return { ...state, resMessage: message, resStatus: isSuccess }
@@ -54,7 +46,6 @@ const adminReducer = (state = initialState, action) => {
         }
 
         case actionTypes.CLEAR_RES_MESSAGE: {
-            console.log("clear message admin called")
             return { ...state, resMessage: "", resStatus: false, isDeleted: false }
         }
 
@@ -98,7 +89,6 @@ const adminReducer = (state = initialState, action) => {
         }
 
         case actionTypes.GET_VIDEOS_LIST: {
-            console.log("reducer acalled", action.payload.videoList)
             if (isSuccess) {
 
                 return { ...state, resStatus: isSuccess, videoList: action.payload.videoList }

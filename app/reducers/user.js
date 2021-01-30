@@ -23,7 +23,6 @@ const userReducer = (state = initialState, action) => {
             return { ...state, resMessage: message, resStatus: isSuccess }
         }
         case actionTypes.CLEAR_MESSAGE: {
-            console.log("clear message user reducer called")
             return { ...state, resMessage: "", resStatus: false }
         }
 
@@ -32,7 +31,6 @@ const userReducer = (state = initialState, action) => {
         }
 
         case actionTypes.ADD_VIDEO: {
-            console.log("Add video reducer user called");
             return { ...state, resMessage: message, resStatus: isSuccess }
         }
 

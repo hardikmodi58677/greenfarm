@@ -166,7 +166,7 @@ function UserDetailsScreen({ route, navigation }) {
           {(userRole == "admin" && currentUser.sEmail !== userEmail) && (
             <View style={styles.btnContainer}>
               <AppButton style={styles.deleteBtn} title="Delete" onPress={() => dispatch(deleteUser(currentUser.sKey))} />
-              <AppButton style={{ ...styles.deleteBtn, backgroundColor: colors.primary }} title="Message" onPress={() => setModalVisible(!modalVisible)} />
+              <AppButton style={{ ...styles.deleteBtn, backgroundColor: colors.secondary }} title="Message" onPress={() => setModalVisible(!modalVisible)} />
             </View>
           )}
         </ScrollView>
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "space-between"
   },
-  submitBtn: { backgroundColor: colors.secondary },
+  submitBtn: { backgroundColor: colors.primary },
   deleteBtn: {
     backgroundColor: colors.danger,
     padding: 10,

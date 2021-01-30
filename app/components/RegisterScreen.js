@@ -49,7 +49,6 @@ export default function RegisterScreen({ navigation }) {
                         }
                     }
                     catch (err) {
-                        console.log(err)
                         alert(err.message)
                     }
 

@@ -166,7 +166,7 @@ export default function VideosScreen({ navigation, role }) {
                                         />
                                         <View style={styles.buttonContainer}>
                                             <SubmitButton title="Add video" style={styles.buttonStyle} />
-                                            <AppButton title="Cancel" onPress={() => setModalVisible(!modalVisible)} style={{ ...styles.buttonStyle, backgroundColor: colors.danger }} />
+                                            <AppButton title="Cancel" onPress={() => setModalVisible(!modalVisible)} style={{ ...styles.buttonStyle, backgroundColor: colors.secondary }} />
                                         </View>
                                     </AppForm>
                                 </View>
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     buttonStyle: {
         width: "50%",
         margin: 20,
-        backgroundColor: colors.secondary,
+        backgroundColor: colors.primary,
         borderRadius: 20,
         padding: 10,
         elevation: 7,

@@ -9,7 +9,6 @@ export const updateUserProfile = ({ sKey, sUsername, sEmail, sPhone, type = "use
 
     database().ref(`/users/${sKey}`).update({ sUsername, sEmail, sPhone })
         .then(() => {
-            console.log("profile", type == "user" ? actionTypes.UPDATE_PROFILE : actionTypes.UPDATE_USER_DETAILS)
             dispatch({
                 type: type == "user" ? actionTypes.UPDATE_PROFILE : actionTypes.UPDATE_USER_DETAILS,
                 isSuccess: true,
@@ -164,8 +163,6 @@ export const sendMessage = ({ senderId: sSenderId, senderName: sSenderName, rece
         else {
             messageReceiverId = sReceiverId
         }
-
-        console.log("messageReceiverId",messageReceiverId)
 
         const messageSendRef = `/users/${messageReceiverId}/messages`
         database().ref(messageSendRef).push({
