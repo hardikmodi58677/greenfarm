@@ -8,11 +8,10 @@ import { addVideo, deleteVideo, getVideos, clearResMessage } from "../actions/ad
 import { showMessage } from "react-native-flash-message";
 import ErrorMessage from "../components/forms/ErrorMessage";
 import ListItemDeleteAction from "../ListItemDeleteAction";
-import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import * as Yup from "yup";
-import AppButton from "../components/AppButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native"
+import AppModal from "../components/AppModal";
 
 
 
@@ -142,36 +141,23 @@ export default function VideosScreen({ navigation, role }) {
                         <MaterialCommunityIcons name="plus" size={40} />
                     </TouchableHighlight>
                     <View style={styles.centeredView}>
-                        <Modal
-                            animationType="slide"
-                            transparent={true}
+                        <AppModal
                             visible={modalVisible}
-                            onRequestClose={() => setModalVisible(!modalVisible)}>
-                            <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                    <AppForm
-                                        initialValues={{ videoUrl: "" }}
-                                        onSubmit={async ({ videoUrl }) => {
-                                            ("videoUrl is", videoUrl)
-                                            setLoading(true)
-                                            dispatch(addVideo({ videoUrl }))
-                                        }}
-                                        validationSchema={validationSchema}
-                                    >
-                                        <AppFormField
-                                            name="videoUrl"
-                                            placeholder="Video url"
-                                            iconName="link"
-                                            keyboardType="default" //Only for ios
-                                        />
-                                        <View style={styles.buttonContainer}>
-                                            <SubmitButton title="Add video" style={styles.buttonStyle} />
-                                            <AppButton title="Cancel" onPress={() => setModalVisible(!modalVisible)} style={{ ...styles.buttonStyle, backgroundColor: colors.secondary }} />
-                                        </View>
-                                    </AppForm>
-                                </View>
-                            </View>
-                        </Modal>
+                            setIsVisible={setModalVisible}
+                            validationSchema={validationSchema}
+                            formFields={[
+                                {
+                                    name: "videoUrl",
+                                    placeholder: "Video url",
+                                    iconName: "link",
+                                }
+                            ]}
+                            buttons={{ btn1: { title: "Add video", style: {} }, btn2: { title: "Cancel", style: {} } }}
+                            onSubmit={(fields) => {
+                                setLoading(true)
+                                dispatch(addVideo({ ...fields }))
+                            }}
+                        />
                     </View>
                 </Fragment>
             )

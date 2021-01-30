@@ -113,8 +113,9 @@ export const deleteVideo = (key) => dispatch => {
 
 
 
-export const sendMessage = ({ senderId: sSenderId, senderName: sSenderName, receiverId: sReceiverId, title: sTitle, description: sDescription, isReply: bIsReply = false, receiver: sReceiver = null, type: sType = "message" }) => dispatch => {
+export const sendMessage = ({ senderId: sSenderId, senderName: sSenderName, receiverId: sReceiverId, title: sTitle, description: sDescription, isReply: bIsReply = false, receiver: sReceiver = null, type: sType="message"  }) => dispatch => {
     dispatch({ type: actionTypes.CLEAR_RES_MESSAGE })
+    console.log("sType is",sType)
     if (sType == "feedback") {
         database().ref("/feedback").push({
             sSenderId,

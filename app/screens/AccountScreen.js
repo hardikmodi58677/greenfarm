@@ -10,11 +10,10 @@ import { showMessage } from "react-native-flash-message";
 import { sendMessage, clearResMessage } from "../actions/admin"
 import routes from "../navigation/routes";
 import ListItemSeparator from "../components/ListItemSeparator"
-import { AppForm, SubmitButton, AppFormField } from "../components/forms"
-import AppButton from "../components/AppButton";
 import LottieView from "lottie-react-native"
 import colors from "../config/colors";
 import * as Yup from "yup";
+import AppModal from "../components/AppModal";
 
 
 export default function AccountScreen({ navigation }) {
@@ -74,7 +73,7 @@ export default function AccountScreen({ navigation }) {
         name: "face",
         backgroundColor: colors.primary,
       },
-      onPress: () => navigation.navigate(routes.USER_DETAILS, { currentUser:user })
+      onPress: () => navigation.navigate(routes.USER_DETAILS, { currentUser: user })
     },
     {
       title: "Logout",
@@ -139,8 +138,34 @@ export default function AccountScreen({ navigation }) {
         </View>
 
       </Screen>
-      <>
-        <Modal
+      <AppModal
+        visible={modalVisible}
+        setIsVisible={setModalVisible}
+        validationSchema={messageValidationSchema}
+        formFields={[
+          {
+            multiline: true,
+            name: "title",
+            placeholder: "Title",
+            iconName: "format-title",
+          },
+          {
+            multiline: true,
+            name: "description",
+            numberOfLines: 3,
+            placeholder: "Feedback",
+            iconName: "thought-bubble",
+          }
+        ]}
+        buttons={{ btn1: { title: "Send" }, btn2: { title: "Cancel" } }}
+        onSubmit={(fields) => {
+          setLoading(true)
+          console.log("dispatched from account screen", fields)
+          dispatch(sendMessage({ ...fields, type: "feedback", senderId: user?.sKey, senderName: user?.eRole === "user" ? user?.sUsername : user?.eRole }))
+        }}
+
+      />
+      {/* <Modal
           animationType="slide"
           transparent={true}
           visible={modalVisible}
@@ -149,10 +174,7 @@ export default function AccountScreen({ navigation }) {
             <View style={styles.modalView}>
               <AppForm
                 initialValues={{ title: "", description: "" }}
-                onSubmit={async ({ title, description }) => {
-                  setLoading(true)
-                  dispatch(sendMessage({ type: "feedback", title, description, senderId: user?.sKey, senderName: user?.eRole === "user" ? user?.sUsername : user?.eRole }))
-                }}
+
                 validationSchema={messageValidationSchema}
               >
                 <AppFormField
@@ -162,7 +184,6 @@ export default function AccountScreen({ navigation }) {
                   iconName="format-title"
                 />
                 <AppFormField
-                  maxLength={150}
                   multiline
                   name="description"
                   numberOfLines={3}
@@ -177,7 +198,7 @@ export default function AccountScreen({ navigation }) {
             </View>
           </View>
         </Modal>
-      </>
+      </> */}
     </>
   );
 }

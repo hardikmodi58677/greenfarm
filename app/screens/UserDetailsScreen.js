@@ -4,6 +4,7 @@ import { StyleSheet, Image, Modal, StatusBar, ScrollView, View, Text, Switch } f
 import LottieView from "lottie-react-native"
 import Screen from "../components/Screen";
 import { AppForm, SubmitButton, AppFormField } from "../components/forms"
+import AppModal from "../components/AppModal"
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserProfile, clearResMessage, updateUserStatus, deleteUser, sendMessage } from "../actions/admin"
 import { useEffect } from "react";
@@ -33,8 +34,8 @@ function UserDetailsScreen({ route, navigation }) {
   });
 
   const messageValidationSchema = Yup.object().shape({
-    title: Yup.string().required().label("Title").min(10),
-    description: Yup.string().required().label("Description"),
+    title: Yup.string().required().label("Title").max(15),
+    description: Yup.string().required().label("Description").max(30),
   });
 
   const [loading, setLoading] = useState(false)
@@ -173,8 +174,37 @@ function UserDetailsScreen({ route, navigation }) {
       </Screen >
       {
         userRole == "admin" && (
-          <Fragment>
-            <Modal
+          <AppModal
+            visible={modalVisible}
+            setIsVisible={setModalVisible}
+            validationSchema={messageValidationSchema}
+            formFields={[
+              {
+                name: "title",
+                placeholder: "Title",
+                iconName: "format-title",
+              },
+              {
+                multiline: true,
+                name: "description",
+                numberOfLines: 3,
+                placeholder: "Description",
+                iconName: "message"
+              }
+            ]}
+            buttons={{ btn1: { title: "Send", style: {} }, btn2: { title: "Cancel", style: {} } }}
+            onSubmit={(fields) => {
+              setLoading(true)
+              dispatch(sendMessage({ ...fields, senderId: userKey, senderName: userRole == "user" ? username : userRole, receiverId: currentUser.sKey, isReply: false, type: "message" }))
+            }}
+          />
+
+        )
+      }
+    </Fragment>);
+}
+
+{/* <Modal
               animationType="slide"
               transparent={true}
               visible={modalVisible}
@@ -211,12 +241,7 @@ function UserDetailsScreen({ route, navigation }) {
                   </AppForm>
                 </View>
               </View>
-            </Modal>
-          </Fragment>
-        )
-      }
-    </Fragment>);
-}
+            </Modal> */}
 
 const styles = StyleSheet.create({
   logo: {
