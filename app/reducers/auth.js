@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as actionTypes from "../actions/types";
 import cache from "../utility/cache";
 

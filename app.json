@@ -16,6 +16,7 @@
       "**/*"
     ],
     "android": {
+      "enableDangerousExperimentalLeanBuilds":true, 
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/images/applogo.png",
         "backgroundColor": "#FFFFFF"

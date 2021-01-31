@@ -1,5 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserLoginStatus } from './app/actions/auth';
 import { NavigationContainer } from "@react-navigation/native"
@@ -38,13 +37,5 @@ const App = () => {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default App
