@@ -31,7 +31,7 @@ export default function RegisterScreen({ navigation }) {
                     </Modal>
                 )
             }
-            <Image style={styles.logo} source={require("../assets/applogo.png")} />
+            <Image style={styles.logo} source={require("../assets/applogox.png")} />
             <ErrorMessage style={styles.error} error={errorMessage} />
             <AppForm
                 initialValues={{ username: "", email: "", password: "" }}

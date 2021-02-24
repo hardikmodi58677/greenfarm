@@ -11,7 +11,7 @@ function WelcomeScreen({ navigation }) {
             style={styles.background}>
             <View style={styles.logoContainer} >
                 <Image style={styles.appLogo}
-                    source={require("../assets/images/applogo.png")}
+                    source={require("../assets/images/applogox.png")}
                 />
             </View>
             <View style={styles.buttonsContainer}>
@@ -30,8 +30,10 @@ function WelcomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
     appLogo: {
+        resizeMode: "contain",
         width: 200,
         height: 200,
+        alignSelf: "center"
     },
     background: {
         flex: 1,

@@ -85,17 +85,10 @@ export default function UserDashboard({ navigation }) {
         showsVerticalScrollIndicator={false}
         data={list}
         keyExtractor={data => data.sKey}
-        renderItem={({ item }) => {
-          return (
-            (!item.temperature && !item.moisture && !item.humidity) ? null :
-              (
-                <Card
-                  temperature={item.temperature == "0" || item.temperature ? `Temperature :${item.temperature}°C` : ""}
-                  moisture={item.moisture == "0" || item.moisture ? `Moisture :${item.moisture} g/m³` : ""}
-                  humidity={item.humidity == "0" || item.humidity ? `Humidity :${item.humidity} RH` : ""}
-                />
-              ))
-        }}
+        renderItem={({ item }) => (<Card
+          list={list}
+          item={item}
+        />)}
         refreshing={refreshing}
         onRefresh={async () => {
           setRefreshing(true)

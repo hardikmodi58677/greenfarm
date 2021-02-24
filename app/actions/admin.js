@@ -3,17 +3,18 @@ import firebaseClient from "../firebaseClient"
 const { firebase: { database } } = firebaseClient
 import axios from "axios"
 
-export const updateUserProfile = ({ sKey, sUsername, sEmail, sPhone, type = "user" }) => dispatch => {
+
+export const updateUserProfile = ({ sKey, sUsername, sEmail, sPhone, sSoil, type = "user" }) => dispatch => {
 
     dispatch({ type: actionTypes.CLEAR_RES_MESSAGE })
 
-    database().ref(`/users/${sKey}`).update({ sUsername, sEmail, sPhone })
+    database().ref(`/users/${sKey}`).update({ sUsername, sEmail, sPhone, sSoil })
         .then(() => {
             dispatch({
                 type: type == "user" ? actionTypes.UPDATE_PROFILE : actionTypes.UPDATE_USER_DETAILS,
                 isSuccess: true,
                 payload: {
-                    userDetails: { sKey, sUsername, sEmail, sPhone }
+                    userDetails: { sKey, sUsername, sEmail, sPhone, sSoil }
                 }
             })
         })
@@ -113,9 +114,8 @@ export const deleteVideo = (key) => dispatch => {
 
 
 
-export const sendMessage = ({ senderId: sSenderId, senderName: sSenderName, receiverId: sReceiverId, title: sTitle, description: sDescription, isReply: bIsReply = false, receiver: sReceiver = null, type: sType="message"  }) => dispatch => {
+export const sendMessage = ({ senderId: sSenderId, senderName: sSenderName, receiverId: sReceiverId, title: sTitle, description: sDescription, isReply: bIsReply = false, receiver: sReceiver = null, type: sType = "message" }) => dispatch => {
     dispatch({ type: actionTypes.CLEAR_RES_MESSAGE })
-    console.log("sType is",sType)
     if (sType == "feedback") {
         database().ref("/feedback").push({
             sSenderId,
@@ -333,26 +333,25 @@ export const getVideos = () => (dispatch) => {
 }
 
 export const getSensorData = () => dispatch => {
-    const sensorData = []
-    database().ref("/sensordata").limitToFirst(30).once("value", dataSnapshot => {
-        dataSnapshot.forEach(snapshot => {
+    const sensorDataRef = database().ref("/sensordata")
+
+    sensorDataRef.on('value', snapshot => {
+        const sensorData = []
+
+        snapshot.forEach(snapshot => {
             const data = snapshot.val()
             sensorData.push({ sKey: snapshot.key, ...data })
         })
+
         dispatch({
             type: actionTypes.GET_SENSOR_DATA_LIST,
             isSuccess: true,
-            payload: { sensorDataList: sensorData.reverse() }
+            payload: { sensorDataList: sensorData.reverse().slice(0, 11) }
         })
+
     })
-        .catch(err => {
-            dispatch({
-                type: actionTypes.GET_SENSOR_DATA_LIST,
-                isSuccess: false,
-                message: err.message
-            })
-        })
 }
+
 
 export const getMessageList = () => (dispatch, getState) => {
     const messages = []
@@ -387,6 +386,23 @@ export const getMessageList = () => (dispatch, getState) => {
                 message: "Something went wrong while retrieving user messages."
             })
         }
+    })
+}
+
+export const getExpertContactDetails = () => (dispatch) => {
+    const expertRef = `-MSEffFZMa2wH4ykJaGE`
+    database().ref(`users/${expertRef}`).once('value', dataSnapshot => {
+        dispatch({
+            type: actionTypes.GET_EXPERT_CONTACT_DETAILS,
+            isSuccess: true,
+            payload: { expertContactDetails: dataSnapshot.val() }
+        })
+    }).catch(err => {
+        dispatch({
+            type: actionTypes.GET_EXPERT_CONTACT_DETAILS,
+            isSuccess: false,
+            message: "Something went wrong while retrieving expert contact details."
+        })
     })
 }
 

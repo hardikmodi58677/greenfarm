@@ -1,15 +1,16 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Image, Modal } from "react-native";
 import LottieView from "lottie-react-native"
 import Screen from "../components/Screen";
 import * as Yup from "yup";
-import { AppForm, SubmitButton, AppFormField} from "../components/forms"
+import { AppForm, SubmitButton, AppFormField } from "../components/forms"
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser, clearMessage } from "../actions/auth"
 import { useRef } from "react";
 import { useEffect } from "react";
 import { showMessage } from "react-native-flash-message";
 import routes from "../navigation/routes";
+import colors from "../config/colors";
 
 export default function RegisterScreen({ navigation }) {
 
@@ -30,7 +31,7 @@ export default function RegisterScreen({ navigation }) {
     // const [errMessage, setErrMessage] = useState("")
     const [loading, setLoading] = useState(false)
     const [formikActions, setFormikActions] = useState(null)
-    
+
 
 
 
@@ -70,7 +71,7 @@ export default function RegisterScreen({ navigation }) {
                     </Modal>
                 )
             }
-            <Image style={styles.logo} source={require("../assets/images/applogo.png")} />
+            <Image style={styles.logo} source={require("../assets/images/applogox.png")} />
 
             <AppForm
                 initialValues={{ username: "", email: "", password: "", phoneNumber: "" }}
@@ -116,7 +117,7 @@ export default function RegisterScreen({ navigation }) {
                     textContent="password" //Only for ios
                 />
                 {/* <ErrorMessage style={styles.error} error={errMessage} /> */}
-                <SubmitButton title="Register" />
+                <SubmitButton title="Register" style={{ backgroundColor: colors.secondary }} />
             </AppForm>
 
         </Screen >
@@ -128,15 +129,18 @@ const styles = StyleSheet.create({
         padding: 18,
     },
     logo: {
+        resizeMode: "contain",
         width: 200,
         height: 200,
         alignSelf: "center",
-        marginBottom: 20,
+        marginVertical: 30,
+        marginTop: 50,
     },
     modal: {
         alignItems: "center",
         justifyContent: "center",
         height: 200,
-        width: 200
+        width: 200,
+
     }
 });

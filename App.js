@@ -12,7 +12,7 @@ LogBox.ignoreLogs(['Setting a timer'])
 
 const App = () => {
 
-  const { user, isReady } = useSelector(state => state.auth)
+  const { user=null, isReady } = useSelector(state => state.auth)
   const dispatch = useDispatch()
 
 

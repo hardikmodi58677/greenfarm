@@ -60,7 +60,23 @@ export default function AccountScreen({ navigation }) {
 
   const menuItems = [
     {
-      title: "Feedback",
+      title: "Update Profile",
+      icon: {
+        name: "face",
+        backgroundColor: colors.primary,
+      },
+      onPress: () => navigation.navigate(routes.USER_DETAILS, { currentUser: user })
+    },
+    {
+      title: "Messages",
+      icon: {
+        name: "message",
+        backgroundColor: colors.lemonYellow,
+      },
+      onPress: () => navigation.navigate(routes.MESSAGES)
+    },
+    {
+      title: "Suggestions",
       icon: {
         name: "account-star",
         backgroundColor: colors.secondary,
@@ -68,12 +84,12 @@ export default function AccountScreen({ navigation }) {
       onPress: () => setModalVisible(!modalVisible)
     },
     {
-      title: "Update Profile",
+      title: "Contact Expert",
       icon: {
-        name: "face",
-        backgroundColor: colors.primary,
+        name: "phone",
+        backgroundColor: colors.purple,
       },
-      onPress: () => navigation.navigate(routes.USER_DETAILS, { currentUser: user })
+      onPress: () => navigation.navigate(routes.CONTACT_EXPERT, { currentUser: user })
     },
     {
       title: "Logout",
@@ -115,7 +131,7 @@ export default function AccountScreen({ navigation }) {
             ItemSeparatorComponent={ListItemSeparator}
             keyExtractor={(item) => item.title}
             renderItem={({ item }) => {
-              if (item.title == "Feedback" && user?.eRole != "user") {
+              if ((item.title == "Suggestions" || item.title == "Contact Expert") && user?.eRole != "user") {
                 return null
               }
               else {
@@ -153,52 +169,17 @@ export default function AccountScreen({ navigation }) {
             multiline: true,
             name: "description",
             numberOfLines: 3,
-            placeholder: "Feedback",
+            placeholder: "Suggestion",
             iconName: "thought-bubble",
           }
         ]}
         buttons={{ btn1: { title: "Send" }, btn2: { title: "Cancel" } }}
         onSubmit={(fields) => {
           setLoading(true)
-          console.log("dispatched from account screen", fields)
           dispatch(sendMessage({ ...fields, type: "feedback", senderId: user?.sKey, senderName: user?.eRole === "user" ? user?.sUsername : user?.eRole }))
         }}
 
       />
-      {/* <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(!modalVisible)}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <AppForm
-                initialValues={{ title: "", description: "" }}
-
-                validationSchema={messageValidationSchema}
-              >
-                <AppFormField
-                  multiline
-                  name="title"
-                  placeholder="Title"
-                  iconName="format-title"
-                />
-                <AppFormField
-                  multiline
-                  name="description"
-                  numberOfLines={3}
-                  placeholder="Feedback"
-                  iconName="thought-bubble"
-                />
-                <View style={styles.buttonContainer}>
-                  <SubmitButton title="Send" style={styles.buttonStyle} />
-                  <AppButton title="Cancel" onPress={() => setModalVisible(!modalVisible)} style={{ ...styles.buttonStyle, backgroundColor: colors.danger }} />
-                </View>
-              </AppForm>
-            </View>
-          </View>
-        </Modal>
-      </> */}
     </>
   );
 }

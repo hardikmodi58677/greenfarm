@@ -112,6 +112,13 @@ const adminReducer = (state = initialState, action) => {
             return { ...state, resStatus: false, resMessage: message }
         }
 
+        case actionTypes.GET_EXPERT_CONTACT_DETAILS: {
+            if (isSuccess) {
+                return { ...state, expertContactDetails: action.payload.expertContactDetails }
+            }
+            return { ...state, resStatus: false, resMessage: message }
+        }
+
 
 
 

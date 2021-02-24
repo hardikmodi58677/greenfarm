@@ -6,8 +6,9 @@
     "orientation": "portrait",
     "icon": "./app/assets/images/applogo.png",
     "splash": {
-      "image": "./app/assets/images/applogo.png",
-      "backgroundColor": "#ffffff"
+      "image": "./app/assets/images/applogox.png",
+      "backgroundColor": "#ffffff",
+      "resizeMode":"contain"
     },
     "updates": {
       "fallbackToCacheTimeout": 1500
@@ -16,7 +17,6 @@
       "**/*"
     ],
     "android": {
-      "enableDangerousExperimentalLeanBuilds":true, 
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/images/applogo.png",
         "backgroundColor": "#FFFFFF"

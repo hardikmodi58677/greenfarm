@@ -48,7 +48,7 @@ function FeedbackScreen() {
       }
       else {
         setList([])
-        setErrorMessage("No feedback data available")
+        setErrorMessage("No suggestions available")
         setLoading(false)
       }
     }
@@ -82,7 +82,7 @@ function FeedbackScreen() {
     <Fragment>
 
       <Screen style={styles.screen}>
-        {!!errorMessage && <ErrorMessage error={`No feeedback available.`} />}
+        {!!errorMessage && <ErrorMessage error={errorMessage} />}
         {
           loading && (
             <Modal visible={loading} style={styles.modal} transparent>
@@ -129,6 +129,7 @@ function FeedbackScreen() {
 const styles = StyleSheet.create({
   screen: {
     paddingHorizontal: 10,
+    paddingVertical: 10,
     backgroundColor: colors.light
   },
   switch: {

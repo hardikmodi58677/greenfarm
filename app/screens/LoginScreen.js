@@ -58,7 +58,7 @@ export default function LoginScreen({ navigation }) {
           </Modal>
         )
       }
-      <Image style={styles.logo} source={require("../assets/images/applogo.png")} />
+      <Image style={styles.logo} source={require("../assets/images/applogox.png")} />
       <AppForm
         initialValues={{ email: "", password: "" }}
         onSubmit={async ({ email, password }, actions) => {
@@ -107,10 +107,11 @@ const styles = StyleSheet.create({
     width: 200
   },
   logo: {
+    resizeMode: "contain",
     width: 200,
     height: 200,
     alignSelf: "center",
-    marginTop: 50,
-    marginBottom: 20,
+    marginVertical: 30,
+    marginTop: 100,
   },
 });

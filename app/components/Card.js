@@ -5,23 +5,54 @@ import colors from "../config/colors";
 import AppText from "./AppText";
 
 function Card(props) {
-  const { humidity = "Data unavailable", temperature = "Data unavailable", moisture = "Data unavailable" } = props;
-  return (
+  const { list = [], item = null } = props;
+  const index = list.findIndex(it => item.sKey == it.sKey)
+  let { prevTemp, prevMois, prevHumd, temp, tempStyle = { color: colors.primary }, humd, humdStyle = { color: colors.primary }, mois, moisStyle = { color: colors.primary } } = {}
+  if (index !== list.length) {
+    const prevValues = list[index + 1]
+    const currentValues = list[index]
+    if (prevValues && currentValues) {
+
+      prevTemp = parseInt(prevValues.temperature)
+      prevHumd = parseInt(prevValues.humidity)
+      prevMois = parseInt(prevValues.moisture)
+      temp = parseInt(currentValues.temperature)
+      humd = parseInt(currentValues.humidity)
+      mois = parseInt(currentValues.moisture)
+
+      if (prevTemp < temp) {
+        tempStyle = { color: colors.danger }
+      } else if (prevTemp > temp) {
+        tempStyle = { color: colors.secondary }
+      }
+
+      if (prevMois < mois) {
+        moisStyle = { color: colors.secondary }
+      } else if (prevMois > mois) {
+        moisStyle = { color: colors.danger }
+      }
+
+      if (prevHumd < humd) {
+        humdStyle = { color: colors.secondary }
+      } else if (prevHumd > humd) {
+        humdStyle = { color: colors.danger }
+      }
+    }
+  }
+
+  if (!temp && !humd && !mois) {
+    return null
+  }
+  else return (
     <TouchableWithoutFeedback >
       <View style={styles.card}>
-        {/* <Image style={styles.image} source={{ uri: imageUri }} /> */}
-        {/* <Image
-          style={styles.image}
-          // tint = "light"
-          // preview={{ uri: thumbnailUrl }} 
-          uri={imageUri} /> */}
         <View style={styles.detailsContainer}>
-          <AppText style={styles.subTitle}>{temperature || "No data available"}</AppText>
-          <AppText style={styles.subTitle}>{humidity || "No data available"}</AppText>
-          <AppText style={styles.subTitle}>{moisture || "No data available"}</AppText>
+          <AppText style={[styles.subTitle, tempStyle]}>{temp == 0 || temp ? `Temperature :${temp}℃` : "Data unavailable"}</AppText>
+          <AppText style={[styles.subTitle, humdStyle]}>{humd == 0 || humd ? `Humidity :${humd} RH` : "Data unavailable"}</AppText>
+          <AppText style={[styles.subTitle, moisStyle]}>{mois == 0 || mois ? `Moisture :${mois} g/m³` : "Data unavailable"}</AppText>
         </View>
       </View>
-    </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback >
   );
 }
 

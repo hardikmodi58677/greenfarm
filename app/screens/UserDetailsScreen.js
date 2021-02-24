@@ -16,7 +16,6 @@ import { clearMessage } from "../actions/auth";
 
 function UserDetailsScreen({ route, navigation }) {
   const { currentUser } = route.params
-
   const dispatch = useDispatch()
   const userState = useSelector(state => state.admin)
   const authState = useSelector(state => state.auth)
@@ -31,6 +30,7 @@ function UserDetailsScreen({ route, navigation }) {
     sUsername: Yup.string().required().label("Name"),
     sEmail: Yup.string().required().email().label("Email"),
     sPhone: Yup.string().matches(phoneRegExp, 'Phone number is not valid').required().label("Phone number"),
+    sSoil: Yup.string()
   });
 
   const messageValidationSchema = Yup.object().shape({
@@ -119,10 +119,10 @@ function UserDetailsScreen({ route, navigation }) {
 
 
           <AppForm
-            initialValues={{ sUsername: currentUser.sUsername, sEmail: currentUser.sEmail, sPhone: currentUser.sPhone }}
-            onSubmit={async ({ sUsername, sEmail, sPhone }) => {
+            initialValues={{ sUsername: currentUser.sUsername, sEmail: currentUser.sEmail, sPhone: currentUser.sPhone, sSoil: currentUser.sSoil || "" }}
+            onSubmit={async ({ sUsername, sEmail, sPhone, sSoil }) => {
               setLoading(true)
-              dispatch(updateUserProfile({ sKey: currentUser.sKey, sUsername, sEmail, sPhone, type: userEmail !== sEmail ? "admin" : "user" }))
+              dispatch(updateUserProfile({ sKey: currentUser.sKey, sUsername, sEmail, sPhone, sSoil, type: userEmail !== sEmail ? "admin" : "user" }))
             }}
             validationSchema={validationSchema}
           >
@@ -148,6 +148,17 @@ function UserDetailsScreen({ route, navigation }) {
               keyboardType="number-pad"
               textContent="telephoneNumber" //Only for ios
             />
+
+            {currentUser.eRole == "user"  && (
+              <AppFormField
+                name="sSoil"
+                placeholder="Soil Type"
+                
+                iconName="dots-horizontal-circle-outline"
+                keyboardType="default"
+              />
+            )}
+
             {
               (userRole == "admin" && currentUser.sEmail !== userEmail) && (
                 <View style={styles.switch}>
@@ -204,44 +215,6 @@ function UserDetailsScreen({ route, navigation }) {
     </Fragment>);
 }
 
-{/* <Modal
-              animationType="slide"
-              transparent={true}
-              visible={modalVisible}
-              onRequestClose={() => setModalVisible(!modalVisible)}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <AppForm
-                    initialValues={{ title: "", description: "" }}
-                    onSubmit={async ({ title, description }) => {
-                      setLoading(true)
-                      dispatch(sendMessage({ senderId: userKey, senderName: userRole == "user" ? username : userRole, receiverId: currentUser.sKey, title, description, isReply: false, type: "message" }))
-                    }}
-                    validationSchema={messageValidationSchema}
-                  >
-                    <AppFormField
-                      name="title"
-                      placeholder="Title"
-                      iconName="format-title"
-                      keyboardType="default" //Only for ios
-                    />
-                    <AppFormField
-                      maxLength={150}
-                      multiline
-                      name="description"
-                      numberOfLines={4}
-                      placeholder="Description"
-                      iconName="message"
-                      keyboardType="default" //Only for ios
-                    />
-                    <View style={styles.buttonContainer}>
-                      <SubmitButton title="Send" style={styles.buttonStyle} />
-                      <AppButton title="Cancel" onPress={() => setModalVisible(!modalVisible)} style={{ ...styles.buttonStyle, backgroundColor: colors.danger }} />
-                    </View>
-                  </AppForm>
-                </View>
-              </View>
-            </Modal> */}
 
 const styles = StyleSheet.create({
   logo: {
